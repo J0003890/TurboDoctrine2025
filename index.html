@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TURBO Organization Doctrine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Base Styles & Theme Variables */
+        :root {
+            /* Default Light Theme */
+            --background-primary: #ffffff;
+            --background-secondary: #f9f9f9;
+            --text-primary: #222222;
+            --text-secondary: #555555;
+            --accent-color: #FF1493; /* Default vivid pink */
+            --border-color: #e0e0e0;
+            --card-background: #ffffff;
+            --header-background: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.05);
+            --hover-background: #f5f5f5;
+        }
+
+        /* Dark Theme */
+        [data-theme="dark"] {
+            --background-primary: #121212;
+            --background-secondary: #1e1e1e;
+            --text-primary: #f1f1f1;
+            --text-secondary: #b0b0b0;
+            --border-color: #333333;
+            --card-background: #1e1e1e;
+            --header-background: #121212;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+            --hover-background: #2a2a2a;
+        }
+
+        /* Ocean Blue Theme */
+        [data-theme="ocean-blue"] {
+            --accent-color: #0061a8;
+        }
+
+        /* Metallic Grey Theme */
+        [data-theme="metallic-grey"] {
+            --accent-color: #71797E;
+        }
+
+        /* People's Orange Theme */
+        [data-theme="peoples-orange"] {
+            --accent-color: #FF5E00;
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: var(--background-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 500;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .intro-text {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        /* Theme Switcher */
+        .theme-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 8px;
+        }
+
+        .theme-switcher {
+            display: flex;
+            gap: 8px;
+            background-color: var(--background-secondary);
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .theme-button {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            background-color: #fff;
+        }
+
+        .theme-dark {
+            background-color: #121212;
+            color: #fff;
+        }
+
+        .theme-ocean-blue {
+            background-color: #0061a8;
+            color: #fff;
+        }
+
+        .theme-metallic-grey {
+            background-color: #71797E;
+            color: #fff;
+        }
+
+        .theme-peoples-orange {
+            background-color: #FF5E00;
+            color: #fff;
+        }
+
+        .theme-button:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-button.active {
+            border-color: var(--accent-color);
+        }
+
+        /* Navigation */
+        .nav-container {
+            background-color: var(--background-primary);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 40px;
+        }
+
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            padding: 15px 0;
+        }
+
+        .nav-button {
+            padding: 5px 20px;
+            color: var(--text-primary);
+            font-weight: 500;
+            position: relative;
+        }
+
+        .nav-button.active {
+            color: var(--accent-color);
+        }
+
+        .nav-button.active::after {
+            content: "";
+            position: absolute;
+            bottom: -16px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--accent-color);
+        }
+
+        /* Section Styles */
+        section {
+            padding: 60px 0;
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            color: var(--text-primary);
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .section-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            font-weight: 500;
+            position: relative;
+        }
+
+        /* Cards */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px var(--shadow-color);
+        }
+
+        .card-header {
+            padding: 20px;
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            color: white;
+            font-weight: 500;
+        }
+
+        .card-body {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-body p {
+            margin-bottom: 15px;
+        }
+
+        /* Lists */
+        .list-container {
+            margin: 20px 0;
+        }
+
+        .list-item {
+            list-style: none;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-item::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+        }
+
+        /* Content Section */
+        .content-section {
+            background-color: var(--background-secondary);
+            border-radius: 8px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 2px 10px var(--shadow-color);
+        }
+
+        .content-section h3 {
+            border-left: 4px solid var(--accent-color);
+            padding-left: 15px;
+            margin-bottom: 20px;
+        }
+
+        /* Accordion */
+        .accordion-item {
+            margin-bottom: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            background-color: var(--card-background);
+        }
+
+        .accordion-header {
+            padding: 15px 20px;
+            background-color: var(--background-secondary);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .accordion-header:hover {
+            background-color: var(--hover-background);
+        }
+
+        .accordion-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 20px;
+        }
+
+        .accordion-content.active {
+            max-height: 1000px;
+            padding: 20px;
+        }
+
+        .accordion-toggle {
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+
+        .accordion-header.active .accordion-toggle {
+            transform: rotate(180deg);
+        }
+
+        /* Call-to-action Button */
+        .cta-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 6px;
+            font-weight: 500;
+            text-align: center;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            border: none;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+
+        .cta-button:hover {
+            background-color: var(--accent-color);
+            opacity: 0.9;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        /* Section Container */
+        .section-container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Section with accent bar */
+        .accent-section {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e0e0;
+            position: relative;
+        }
+
+        .accent-section::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: var(--accent-color);
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--background-secondary);
+            padding: 40px 0;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            margin-top: 60px;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .card-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+            
+            .nav-button {
+                padding: 5px 10px;
+            }
+            
+            .nav-button.active::after {
+                bottom: -10px;
+            }
+            
+            .theme-switcher {
+                flex-wrap: wrap;
+                width: auto;
+                top: 10px;
+                right: 10px;
+            }
+            
+            .theme-button {
+                width: 28px;
+                height: 28px;
+            }
+        }
+
+        /* Animation for sections */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Progress bar */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-color);
+            width: 0%;
+        }
+
+        /* Icon styles */
+        .section-icon {
+            color: var(--accent-color);
+            margin-right: 10px;
+        }
+
+        /* Specific section styles */
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h3 {
+            margin: 0;
+        }
+
+        /* Clean divider */
+        .divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 40px 0;
+        }
+
+        /* Process steps */
+        .process-steps {
+            margin-top: 30px;
+        }
+
+        .process-step {
+            display: flex;
+            margin-bottom: 25px;
+        }
+
+        .step-number {
+            min-width: 30px;
+            height: 30px;
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: 500;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+
+        /* Info grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .grid-item {
+            background-color: var(--card-background);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px var(--shadow-color);
+        }
+
+        .grid-title {
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+        }
+
+        .grid-icon {
+            color: var(--accent-color);
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <!-- Theme Switcher -->
+    <div class="theme-container">
+        <div class="theme-switcher">
+            <div class="theme-button active" data-theme="light" title="Light Mode">
+                <i class="fas fa-sun"></i>
+            </div>
+            <div class="theme-button theme-dark" data-theme="dark" title="Dark Mode">
+                <i class="fas fa-moon"></i>
+            </div>
+            <div class="theme-button theme-ocean-blue" data-theme="ocean-blue" title="Ocean Blue">
+                <i class="fas fa-water"></i>
+            </div>
+            <div class="theme-button theme-metallic-grey" data-theme="metallic-grey" title="Metallic Grey">
+                <i class="fas fa-cog"></i>
+            </div>
+            <div class="theme-button theme-peoples-orange" data-theme="peoples-orange" title="People's Orange">
+                <i class="fas fa-fire"></i>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="container">
+            <h1 class="logo">TURBO</h1>
+            <p class="intro-text">
+                Together, we will build a wonderful organization—a place where every one of us can
+                make a positive impact, grow with the company, and feel safe and excited to come to work
+                each day. To us, a wonderful organization isn't just about having some snacks stacked in
+                the hallway; it's about everyone feeling valued.
+            </p>
+        </div>
+    </header>
+
+    <div class="nav-container">
+        <div class="container">
+            <div class="nav-menu">
+                <a href="#vision" class="nav-button">Vision</a>
+                <a href="#core-beliefs" class="nav-button">Core Beliefs</a>
+                <a href="#turbo-way" class="nav-button">TURBO Way</a>
+                <a href="#expectations" class="nav-button">Expectations</a>
+                <a href="#performance" class="nav-button">Performance</a>
+                <a href="#compensation" class="nav-button">Compensation</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <section id="vision" class="fade-in">
+            <h2 class="section-title">Our Vision</h2>
+            
+            <div class="section-container">
+                <p>
+                    We know that in many areas we are still far short. But we are determined to do our
+                    very best to create such an organization. To make this happen, we need a clear, mutual
+                    understanding of how we operate. Building a great organization is never the job of any one
+                    person—it's a collective effort from everyone. This doctrine is our shared set of rules and
+                    beliefs, a guide to how we behave and work together to make TURBO a place where each
+                    and every one of us, flourishes.
+                </p>
+                
+                <p>
+                    At TURBO, we see our organization as a place where professionals come together
+                    to achieve something meaningful. Our relationships are built on professionalism—respect,
+                    trust, and a shared drive to succeed, forged by shared journeys. This bond demands that
+                    we hold each other to high standards, as that's how we achieve great things collectively.
+                    Personal friendships are embraced, but they should never compromise our professional
+                    standards.
+                </p>
+                
+                <p>
+                    We strive to create a workplace that feels like a family—a supportive, connected
+                    team driven by shared objectives. While we are committed to helping each other, we could
+                    not tolerate negative behavior, laziness, or consistently incompetence, because these
+                    undermine everyone's morale and our collective success. By blending the warmth and
+                    support of a family with a steadfast commitment to excellence, we ensure every team
+                    member brings their best while having a happy workplace.
+                </p>
+                
+                <p>
+                    We understand that workplace satisfaction is vital. High employee turnover imposes
+                    significant costs on any organization. When talented professionals feel fulfilled and choose
+                    to stay and build their careers over the long term, it creates compounding benefits. For
+                    TURBO, we mitigate those turnover costs, retain crucial knowledge, foster deeper
+                    collaboration through established trust, and maintain momentum on long-term challenges.
+                </p>
+                
+                <p>
+                    For the individual, sustained commitment within a challenging environment like ours
+                    offers the invaluable opportunity to do and own something from conception through to
+                    tangible results, building a portfolio of impact. Executive search insights and leadership
+                    studies often observe that paths to senior positions usually require demonstrated long-haul
+                    strategic impact and building deep organizational trust—a path that is extremely difficult for
+                    those who frequently change jobs.
+                </p>
+                
+                <p>
+                    Together, we will create a place where dedicated professionals do meaningful work,
+                    grow relentlessly, and deliver lasting impact.
+                </p>
+            </div>
+        </section>
+
+        <section id="core-beliefs" class="fade-in">
+            <h2 class="section-title">Our Core Beliefs</h2>
+            <p style="text-align: center; max-width: 800px; margin: 0 auto 30px;">
+                These core beliefs define how we operate and what guides our decisions:
+            </p>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3><i class="fas fa-balance-scale section-icon"></i> Operate as a True Meritocracy</h3>
+                        <div class="accordion-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Opportunity, recognition, and advancement are based purely on merit – demonstrated skills, performance, and contribution. We do not engage in favoritism. Consistent with this, we do not implement Diversity, Equity, and Inclusion (DEI) programs, as we believe they conflict with evaluating individuals strictly on their merits. We achieve fairness by rewarding capability and results alone.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3><i class="fas fa-bullseye section-icon"></i> Focus on Impact Over Titles</h3>
+                        <div class="accordion-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Your contribution and the results you achieve are paramount. We value the tangible difference you make far more than your formal title.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3><i class="fas fa-code section-icon"></i> Prioritize Technical Excellence & Individual Contribution</h3>
+                        <div class="accordion-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>We deeply value the expertise of our individual contributors – the engineers, builders, and thinkers who execute the work. Our goal is to maximize the ratio of individual contributors to managers, recognizing that expertise is our engine for progress.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3><i class="fas fa-layer-group section-icon"></i> Ensure a Flat Structure</h3>
+                        <div class="accordion-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>We deliberately minimize organizational layers. A shorter chain of command enables faster decisions and more direct action.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3><i class="fas fa-building section-icon"></i> Commit to In-Person Collaboration</h3>
+                        <div class="accordion-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>We are a full-time, in-office workforce. We believe working together physically is essential for building a strong culture, fostering collaboration, and facilitating learning. Exceptions are strictly limited, temporary, and granted only in rare circumstances.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3><i class="fas fa-user-check section-icon"></i> Hire for Skills and Drive</h3>
+                        <div class="accordion-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Our hiring decisions focus on capability, intrinsic motivation, cultural alignment, and proven results (like work samples). We value demonstrated ability and a 'doer' attitude over presentation style.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3><i class="fas fa-seedling section-icon"></i> Cultivate Internal Growth</h3>
+                        <div class="accordion-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>We prioritize hiring individuals with high potential and investing in their development within TURBO. Experience shows us that cultivating our own talent yields the best long-term results compared to relying heavily on external senior hires.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3><i class="fas fa-graduation-cap section-icon"></i> Emphasize On-the-Job Learning</h3>
+                        <div class="accordion-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Development happens primarily through tackling challenging work and learning from practical experience, with guidance from managers and peers. We support self-learning by providing resources and context, but we do not mandate formal training hours or 'spoon-feed' development. Progress is assessed based on capability growth.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3><i class="fas fa-briefcase section-icon"></i> Be a Workplace, Not Primarily a School</h3>
+                        <div class="accordion-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>While learning and growth are crucial outcomes we support, our primary purpose is achieving impactful results through meaningful work. Learning is an integral byproduct, not the sole objective.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3><i class="fas fa-heart section-icon"></i> Prioritize Loyalty: Non-Rehiring Policy</h3>
+                        <div class="accordion-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Our firm policy is not to rehire former employees, ensuring fairness to our loyal team members who remain committed to the company. While very rare exceptions may have occurred historically, going forward, the only potential exceptions are for those who left solely for advanced studies or critical family caregiving responsibilities, and were not otherwise employed during that period. Our primary focus is investing in and rewarding our dedicated current employees.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3><i class="fas fa-handshake section-icon"></i> Absolute Zero Counter-Offers: Loyalty Has Value</h3>
+                        <div class="accordion-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Our policy is absolute: we have never made counter-offers, and we never will. We believe loyalty has tremendous value. Counter-offers undermine this; they reward active job seeking and devalue the commitment shown by our dedicated team. It is our job to ensure our people are rewarded fairly and proactively, well before they feel the need to look elsewhere. Therefore, our financial rewards and recognition are directed towards our loyal employees – those invested in our shared future – not towards reactive bids for individuals exploring external options.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3><i class="fas fa-comments section-icon"></i> Practice Direct & Constructive Feedback</h3>
+                        <div class="accordion-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>We believe in honest and direct communication. Consistent high performance may naturally result in less feedback. If performance issues arise, we will address them constructively and transparently, always aiming for improvement. Should separation become necessary after genuine efforts, the process will be handled with fairness and respect, considering individual circumstances.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3><i class="fas fa-sync-alt section-icon"></i> Admit We're Not Perfect & We Need to Talk</h3>
+                        <div class="accordion-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Let's be honest – we strive to do great work, but we'll inevitably make mistakes or implement things imperfectly. Recognizing this, we believe the only way forward is together, through open conversation. If you see an issue, or if something makes you unhappy, please bring it up. We genuinely want to hear it, listen respectfully, and work together to address it.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3><i class="fas fa-door-open section-icon"></i> True Open Door Policy: Talk to Anyone</h3>
+                        <div class="accordion-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>We operate a genuine open door policy. If you have any problem, concern, or idea, we encourage you to bring it forward. You are encouraged to speak with anyone you feel comfortable with, regardless of their role or level – not just your direct manager. Everyone, including the CEO, is accessible and ready to listen. If your issue is urgent, please let us know, and we will prioritize addressing it promptly.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3><i class="fas fa-shield-alt section-icon"></i> Ensure a Safe Workplace</h3>
+                        <div class="accordion-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>We are committed to maintaining a physically and emotionally secure environment. There is zero tolerance for harassment or bullying in any form.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3><i class="fas fa-user-secret section-icon"></i> Respect Personal Privacy</h3>
+                        <div class="accordion-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>We respect the boundary between professional and personal life. An employee's personal life is their own, unless it begins to directly and negatively impact their work or the collective workplace environment.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3><i class="fas fa-umbrella-beach section-icon"></i> Offer Responsible Unlimited Leave</h3>
+                        <div class="accordion-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>We provide unlimited paid time off because people have different needs throughout each period of their life, trusting our team to use it responsibly and with consideration for colleagues and work commitments.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="turbo-way" class="fade-in">
+            <h2 class="section-title">The TURBO Way</h2>
+            
+            <div class="section-container">
+                <p>
+                    At TURBO, our culture is our competitive advantage, forged through relentless focus on what
+                    matters and an unwavering commitment to excellence. These five principles aren't mere
+                    suggestions—they are the foundation of everything we do. They define how we work,
+                    collaborate, and win together in our pursuit of extraordinary results. While these principles form
+                    our foundation, they serve as general guidelines; specific roles may require less of certain
+                    principles. For example, roles demanding extreme accuracy, like in certain operations, will
+                    naturally temper principles such as 'Act Now, Fix Later' with appropriate caution.
+                </p>
+            </div>
+            
+            <div class="card-container">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>1. ONE TURBO</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Teamwork isn't optional. No single person, no matter how talented, has ever achieved
+                            greatness alone. When we combine our diverse skills, innovative ideas, and perseverance,
+                            we make the impossible possible. It's about collective force, not individual recognition.</p>
+                        <ul class="list-container">
+                            <li class="list-item">Work Together</li>
+                            <li class="list-item">Celebrate Teams, Not Individuals</li>
+                            <li class="list-item">Share Knowledge Always</li>
+                            <li class="list-item">Blow Up Departments</li>
+                            <li class="list-item">Open Information</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>2. TRUTH AND TRUST</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Trust makes everything faster and stronger. Honesty eliminates waste, speeds decisions, and
+                            prevents catastrophic failures. When transparency becomes our foundation, we are ready to
+                            forge ahead to solve any confronting challenge.</p>
+                        <ul class="list-container">
+                            <li class="list-item">Do What You Say</li>
+                            <li class="list-item">Give Direct Feedback</li>
+                            <li class="list-item">"I Don't Know" Shows Strength</li>
+                            <li class="list-item">It's OK to be Wrong</li>
+                            <li class="list-item">Fairness, Always</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>3. EFFECTIVE, SIMPLE, AND PRACTICAL</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Only do things that matter. Eliminate unnecessary complexity. Focus on what matters, execute
+                            precisely, and simplify ruthlessly. Complexity slows down progress. We solve real-world
+                            problems with tangible results, avoiding overengineered solutions.</p>
+                        <ul class="list-container">
+                            <li class="list-item">First, Ask Why?</li>
+                            <li class="list-item">Obsess on Effectiveness</li>
+                            <li class="list-item">Delete, Then Simplify</li>
+                            <li class="list-item">Hands-On</li>
+                            <li class="list-item">Collaborate More, MeetingLess</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>4. SPEED AND IMPACT</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>We act now, fix later, making bold decisions with 80% of the information and adjusting as we
+                            go, prioritizing momentum over perfection. Success is measured by outcome, not hours. By
+                            maintaining a laser focus on what matters, we direct our energy into critical priorities, avoiding
+                            the pitfalls of scattered efforts.</p>
+                        <ul class="list-container">
+                            <li class="list-item">Act Now, Fix Later</li>
+                            <li class="list-item">Outcome, Not Hours</li>
+                            <li class="list-item">Laser Focus on What Matters</li>
+                            <li class="list-item">Work Smart AND Hard</li>
+                            <li class="list-item">Solve the Unsolvable</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>5. GRIT AND GROW</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Success will never be handed to you—it's earned through grit, growth, and relentless effort. In
+                            a world obsessed with quick fixes and passive consumption, real progress demands hard
+                            work. Reading and listening aren't enough; true learning happens when you roll up your
+                            sleeves and dive in.</p>
+                        <ul class="list-container">
+                            <li class="list-item">Grit Over Genius</li>
+                            <li class="list-item">Depth Through Practice</li>
+                            <li class="list-item">Better Every Day</li>
+                            <li class="list-item">Leaders Do the Work</li>
+                            <li class="list-item">Learn Forever</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="expectations" class="fade-in">
+            <h2 class="section-title">Our Expectations at TURBO</h2>
+            
+            <div class="section-container">
+                <p>
+                    We all contribute to making TURBO an outstanding place to work and succeed. Achieving
+                    our collective goals requires clarity on what is expected from each of us, reflecting our
+                    diverse roles. Meeting and exceeding these expectations are essential for career
+                    advancement and promotion to the next level within the company.
+                </p>
+            </div>
+            
+            <div class="accent-section">
+                <h3>Expectations for Everyone</h3>
+                <p>As a member of TURBO, you represent the company and contribute to our shared mission.
+                    We expect everyone to embody the following principles daily:</p>
+                
+                <div class="process-steps">
+                    <div class="process-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4 class="step-title">Embrace the TURBO Way</h4>
+                            <p>Our collaborative culture is central to our success.
+                            Operate as one unified team—Team TURBO—ensuring your actions benefit the
+                            company as a whole. Collaborate effectively with colleagues, generously share skills,
+                            resources, and ideas, and always prioritize the team's collective success.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="process-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4 class="step-title">Operate Professionally & Take Ownership</h4>
+                            <p>Demonstrate responsibility and
+                            accountability for your work and its outcomes. Address challenges proactively and
+                            with determination, pushing tasks through with a high standard of excellence.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="process-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4 class="step-title">Maintain a Positive Attitude</h4>
+                            <p>Approach challenges with a proactive, "can-do" spirit,
+                            focusing on finding solutions. Foster a positive and supportive environment for your
+                            colleagues, actively discouraging negativity, gossip, or undermining behavior.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="process-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4 class="step-title">Provide Feedback</h4>
+                            <p>We value transparency and continuous improvement. If aspects
+                            of your work, team, or company environment are causing concern, share your
+                            feedback constructively directly (directly with leadership, including the CEO). Open
+                            dialogue allows us the opportunity to understand and address issues. Proactive
+                            communication about concerns is expected so we can work towards solutions
+                            together.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section-container" style="background-color: var(--accent-color); opacity: 0.05; margin-top: 20px; padding: 20px;">
+                    <h4 style="color: var(--accent-color); opacity: 1;">Success Indicators:</h4>
+                    <ul class="list-container">
+                        <li class="list-item">You become a recognized resource, often sought out by others for your expertise or
+                            assistance.</li>
+                        <li class="list-item">You demonstrate capacity and willingness to take on increasing responsibility,
+                            sometimes extending beyond your immediate role.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="accent-section">
+                <h3>Additional Expectations for Senior Roles</h3>
+                <p>As a senior professional at TURBO, whether leading people or complex initiatives, you are
+                    a leader influencing your peers, project outcomes, and the broader company culture. In
+                    addition to the expectations for everyone, we require individuals in these senior roles to:</p>
+                
+                <div class="info-grid">
+                    <div class="grid-item">
+                        <h4 class="grid-title"><i class="fas fa-user-tie grid-icon"></i> Be a Reliable Go-To Person</h4>
+                        <p>Serve as a dependable resource and source of expertise for colleagues across the organization within your domain. Foster trust and be sought out for guidance and support.</p>
+                    </div>
+                    
+                    <div class="grid-item">
+                        <h4 class="grid-title"><i class="fas fa-tachometer-alt grid-icon"></i> Drive Results and Progress</h4>
+                        <p>Actively propel projects, initiatives, or teams towards achieving ambitious goals and delivering excellent results. Continuously identify opportunities for improvement and uphold high standards of execution and quality within your sphere of influence.</p>
+                    </div>
+                    
+                    <div class="grid-item">
+                        <h4 class="grid-title"><i class="fas fa-puzzle-piece grid-icon"></i> Initiate Solutions Proactively</h4>
+                        <p>Identify challenges and opportunities within your area of responsibility or technical domain and take ownership to develop and implement effective solutions without waiting for direction.</p>
+                    </div>
+                    
+                    <div class="grid-item">
+                        <h4 class="grid-title"><i class="fas fa-balance-scale grid-icon"></i> Ensure Fairness and Objectivity</h4>
+                        <p>Treat all colleagues impartially and equitably in your interactions and collaborations. Contribute to objective decision-making and foster an environment of mutual respect.</p>
+                    </div>
+                    
+                    <div class="grid-item">
+                        <h4 class="grid-title"><i class="fas fa-brain grid-icon"></i> Maintain and Leverage Deep Expertise</h4>
+                        <p>Possess and continuously develop the necessary domain knowledge and technical/functional competence. Effectively apply this expertise to solve complex problems, contribute to strategic solutions, make informed decisions, and mentor others where appropriate. This deep competence is fundamental to success in your senior role.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accent-section">
+                <h3>Additional Expectations for Senior Leadership & Executives</h3>
+                <p>As an executive leader, you are entrusted with setting TURBO's strategic direction and
+                    shaping its future. Beyond the expectations for all employees and managers, we look to you
+                    to:</p>
+                
+                <div class="card-container">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Strategic Foresight</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Think critically about the future, anticipate market shifts and emerging trends, and proactively prepare the organization for upcoming challenges and opportunities.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Champion a Clear Vision</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Maintain a holistic view of the organization, prioritizing TURBO's long-term success in all decisions. Clearly articulate the company's direction and strategic priorities.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Lead Innovation</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Pioneer new initiatives and guide the company into new strategic territories. Demonstrate original thinking and effective leadership, particularly on novel or complex projects.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Financial Acumen</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Possess a strong understanding of financial principles and company performance metrics. Make fiscally responsible decisions that support TURBO's sustainable growth and stability.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Positive Outlook</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Steadfastly champion a positive, determined perspective throughout the organization, even during challenging times. Foster a culture of resilience and belief in the company's mission.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Broad Experience</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Continuously seek to broaden your understanding and experience across different functional areas of the business. Unless deep technical specialization is core to your role, expect and embrace opportunities for role rotations every few years to enhance strategic perspective.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="performance" class="fade-in">
+            <h2 class="section-title">Our Performance Management Philosophy</h2>
+            
+            <div class="section-container">
+                <h3>Core Principles</h3>
+                
+                <div class="section-header">
+                    <i class="fas fa-tasks section-icon" style="font-size: 1.5rem;"></i>
+                    <h4>Performance Management</h4>
+                </div>
+                <p style="margin-bottom: 25px;">We evaluate performance based on impact and results, not solely on effort. While we do recognize exceptional effort, particularly when overcoming challenges, outcomes are the primary driver of assessment and recognition. We reward setting ambitious goals ("aiming high") rather than defaulting to easily achievable targets. To ensure transparency and alignment, goals (including the CEO's) are public, clarifying our collective objectives.</p>
+                
+                <div class="section-header">
+                    <i class="fas fa-level-up-alt section-icon" style="font-size: 1.5rem;"></i>
+                    <h4>Promotion</h4>
+                </div>
+                <p style="margin-bottom: 25px;">Advancement at TURBO is driven by impact. We promote individuals who demonstrably enhance the company's success through significant value creation, continuous skill development, proven dependability, and effective leadership (where applicable). We actively seek to elevate high-impact contributors into roles where they can achieve greater results and maximize their contribution to the company.</p>
+                
+                <div class="section-header">
+                    <i class="fas fa-coins section-icon" style="font-size: 1.5rem;"></i>
+                    <h4>Compensation</h4>
+                </div>
+                <p style="margin-bottom: 25px;">Your total compensation reflects your value, contribution level, and overall impact at TURBO, considered alongside the company's financial performance. We ensure that higher performance and broader impact translate to higher compensation, enabling us to attract, retain, and reward top talent. Roles demanding greater technical complexity, wider strategic context, broader scope, increased responsibility, and more significant impact generally command higher compensation, reflecting the demanding nature and value of these contributions.</p>
+                
+                <div class="section-header">
+                    <i class="fas fa-chart-bar section-icon" style="font-size: 1.5rem;"></i>
+                    <h4>Compensation Structure & Seniority</h4>
+                </div>
+                <p style="margin-bottom: 25px;">The structure of compensation changes with seniority. Specifically, the proportion of variable pay (such as bonuses) relative to base salary typically increases at higher levels. This means senior positions offer greater upside potential linked to company success but also carry more downside risk during challenging periods, aligning senior incentives more closely with overall business performance compared to junior roles.</p>
+                
+                <div class="section-header">
+                    <i class="fas fa-user-tag section-icon" style="font-size: 1.5rem;"></i>
+                    <h4>Compensation Structure & Role Family</h4>
+                </div>
+                <p style="margin-bottom: 25px;">The compensation mix also varies by role family. Roles with a more direct influence on key business outcomes (like revenue generation or profitability) typically have a larger variable compensation component relative to their base salary. Consequently, in strong performance years, these roles often see a proportionally larger increase in variable pay. Conversely, during challenging years, the variable component for these roles may decrease more significantly. For instance, variable pay for sales or business development roles often fluctuates more year-to-year than roles with less direct impact on immediate financial results, such as administrative positions.</p>
+                
+                <div class="section-header">
+                    <i class="fas fa-calendar-alt section-icon" style="font-size: 1.5rem;"></i>
+                    <h4>Compensation Distribution and Timing</h4>
+                </div>
+                <p>Our goal is to provide a more consistent and predictable compensation flow for employees throughout the year. We are modifying our pay practices to distribute earnings more evenly, rather than concentrating significant amounts into infrequent periods (like large annual bonuses). This approach aims to provide employees with a more stable income stream, allow for early recognition of company success and individual contributions, and mitigate retention risks associated with single, large payout dates, benefiting both our team members and the company's stability.</p>
+            </div>
+        </section>
+        
+        <section id="compensation" class="fade-in">
+            <h2 class="section-title">Our Compensation Framework</h2>
+            
+            <div class="section-container">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <i class="fas fa-money-bill-wave" style="font-size: 3rem; color: var(--accent-color);"></i>
+                </div>
+                
+                <h3 style="text-align: center; margin-bottom: 30px;">General Compensation Components</h3>
+                
+                <div class="card-container">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Base Salary</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>This is your stable, fixed compensation for executing your role effectively. It increases based on your sustained contributions, skill growth, performance trajectory, and the overall success of the company.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Position Allowance</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>This is the allowance tied to a certain specific position or job level.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Incentives</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Certain roles, particularly those with directly measurable outputs like Sales, may have specific incentive plans tied to achieving predefined targets. These incentives typically form part of the variable compensation package.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Bonus</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>This is variable compensation designed to reward strong performance at the individual, team, and company levels. The total bonus pool is directly determined by TURBO's financial performance using a transparent framework.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section-container" style="margin-top: 30px;">
+                    <h4 style="color: var(--accent-color); margin-bottom: 20px; font-size: 1.3rem;"><i class="fas fa-percentage" style="margin-right: 10px;"></i> Bonus Structure</h4>
+                    
+                    <div class="info-grid">
+                        <div class="grid-item">
+                            <h5 style="margin-bottom: 15px; color: var(--accent-color);">Advance Bonus Payment</h5>
+                            <p>A small fraction of the anticipated annual bonus will be prepayed out monthly throughout the year. This amount is calculated based on company performance from two quarters prior and is typically a percentage of base salary. Eligibility requires a qualifying performance rating (B rating under current scale or 7 or B- under new scale) from the preceding performance cycle; new hires without a rating are not eligible until they receive a provisional rating after 6 months.</p>
+                        </div>
+                        
+                        <div class="grid-item">
+                            <h5 style="margin-bottom: 15px; color: var(--accent-color);">Year-End Bonus</h5>
+                            <p>The remaining portion of the annual bonus (after accounting for any Advance Bonus payments and applicable incentives paid). This is typically paid in six monthly installments from March to August following the performance year. Its size reflects individual, team, and overall company performance for that year. This component is highly variable: it will be substantial in strong financial years but may be significantly reduced or even zero if the company experiences poor results or financial loss.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-container" style="margin-top: 40px;">
+                <h3 style="text-align: center; margin-bottom: 30px;">Equity Awards (Stock Grants/Options)</h3>
+                
+                <div class="section-header">
+                    <i class="fas fa-chart-pie section-icon" style="font-size: 1.5rem;"></i>
+                    <h4>Long-Term Compensation</h4>
+                </div>
+                <p style="margin-bottom: 25px;">
+                    Equity awards are a significant component of variable compensation, designed to
+                    recognize and reward sustained, impactful contributions to TURBO over the long term.
+                    Consistent with our overall compensation philosophy, the proportion of total variable
+                    compensation delivered through equity awards typically increases with position level and
+                    seniority.
+                </p>
+                
+                <div class="section-header">
+                    <i class="fas fa-clock section-icon" style="font-size: 1.5rem;"></i>
+                    <h4>Equity Grant Timing</h4>
+                </div>
+                <p style="margin-bottom: 25px;">
+                    Our intention includes an initial, significant-scale grant anticipated shortly before a
+                    potential IPO, followed by periodic smaller scale grants thereafter. The specific timing of this
+                    first round, occurring a few days prior to the potential IPO, is influenced by regulatory
+                    considerations.
+                </p>
+                
+                <p>
+                    For this initial pre-IPO grant, award sizes will primarily be determined by a
+                    combination of factors, including the employee's start date (with earlier tenure generally
+                    resulting in much larger grants) and the strategic impact associated with their role. This
+                    round also aims to formally grant awards to all remaining participants under TURBO's
+                    equity incentive, fulfilling our longer-than-expected outstanding commitments. Future
+                    periodic grants will continue to incentivize ongoing performance and long-term commitment.
+                </p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <button class="cta-button" id="back-to-top">
+                    <i class="fas fa-arrow-up" style="margin-right: 8px;"></i> Back to Top
+                </button>
+            </div>
+        </section>
+    </div>
+    
+    <footer>
+        <div class="footer-logo">TURBO</div>
+        <p>© 2025 TURBO Organization. All rights reserved.</p>
+        <p style="margin-top: 10px;">Organization Doctrine Version 1.0</p>
+    </footer>
+    
+    <script>
+        // Theme Switcher
+        const themeButtons = document.querySelectorAll('.theme-button');
+        const body = document.querySelector('body');
+        
+        themeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                themeButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to the clicked button
+                button.classList.add('active');
+                
+                // Get the theme from the button's data attribute
+                const theme = button.getAttribute('data-theme');
+                
+                // Remove all existing theme attributes
+                body.removeAttribute('data-theme');
+                
+                // If the theme is not light (default), add the theme attribute
+                if (theme !== 'light') {
+                    body.setAttribute('data-theme', theme);
+                }
+                
+                // Save the theme preference in localStorage
+                localStorage.setItem('preferred-theme', theme);
+            });
+        });
+        
+        // Check for saved theme preference
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('preferred-theme');
+            if (savedTheme) {
+                // Apply the saved theme
+                if (savedTheme !== 'light') {
+                    body.setAttribute('data-theme', savedTheme);
+                }
+                
+                // Update the active button
+                themeButtons.forEach(btn => {
+                    if (btn.getAttribute('data-theme') === savedTheme) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+        });
+        
+        // Accordion functionality
+        document.querySelectorAll('.accordion-header').forEach(button => {
+            button.addEventListener('click', () => {
+                const content = button.nextElementSibling;
+                
+                button.classList.toggle('active');
+                
+                if (button.classList.contains('active')) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+        });
+        
+        // Back to top button
+        document.getElementById('back-to-top').addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Fade-in animation
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+        
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        
+        // Observe sections for animation
+        document.querySelectorAll('.fade-in').forEach(element => {
+            observer.observe(element);
+        });
+        
+        // Navigation
+        document.querySelectorAll('.nav-button').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all nav buttons
+                document.querySelectorAll('.nav-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Add active class to the clicked button
+                this.classList.add('active');
+                
+                // Get the target section
+                const targetId = this.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+                
+                // Scroll to the section
+                window.scrollTo({
+                    top: targetSection.offsetTop - 70,
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Highlight the active section in the navigation
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            const navButtons = document.querySelectorAll('.nav-button');
+            
+            let currentSection = '';
+            let scrollPosition = window.scrollY;
+            
+            // Update scroll progress bar
+            const totalHeight = document.body.scrollHeight - window.innerHeight;
+            const progress = (scrollPosition / totalHeight) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionHeight = section.clientHeight;
+                
+                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            navButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('href') === `#${currentSection}`) {
+                    btn.classList.add('active');
+                }
+            });
+        });
+        
+        // Initial highlight for the visible section
+        function highlightVisibleSection() {
+            const scrollPosition = window.scrollY;
+            const sections = document.querySelectorAll('section');
+            const navButtons = document.querySelectorAll('.nav-button');
+            
+            let currentSection = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionHeight = section.clientHeight;
+                
+                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            if (currentSection) {
+                navButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('href') === `#${currentSection}`) {
+                        btn.classList.add('active');
+                    }
+                });
+            } else {
+                // Default to first nav button if no section is active
+                navButtons[0].classList.add('active');
+            }
+        }
+        
+        // Run once when the page loads
+        window.addEventListener('load', highlightVisibleSection);
+    </script>
+</body>
+</html>
